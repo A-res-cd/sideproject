@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "WindowsTranscriber.Audio/1.0.0": {
+        "dependencies": {
+          "WindowsTranscriber.Core": "1.0.0"
+        },
+        "runtime": {
+          "WindowsTranscriber.Audio.dll": {}
+        }
+      },
+      "WindowsTranscriber.Core/1.0.0": {
+        "runtime": {
+          "WindowsTranscriber.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "WindowsTranscriber.Audio/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "WindowsTranscriber.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

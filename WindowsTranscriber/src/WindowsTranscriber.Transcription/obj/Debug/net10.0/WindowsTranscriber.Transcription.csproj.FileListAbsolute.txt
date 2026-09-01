@@ -1,0 +1,16 @@
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\bin\Debug\net10.0\WindowsTranscriber.Transcription.deps.json
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\bin\Debug\net10.0\WindowsTranscriber.Transcription.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\bin\Debug\net10.0\WindowsTranscriber.Transcription.pdb
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\bin\Debug\net10.0\WindowsTranscriber.Core.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\bin\Debug\net10.0\WindowsTranscriber.Core.pdb
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.csproj.AssemblyReference.cache
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.AssemblyInfoInputs.cache
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.AssemblyInfo.cs
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.csproj.CoreCompileInputs.cache
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.sourcelink.json
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsT.6238ABE3.Up2Date
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\refint\WindowsTranscriber.Transcription.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\WindowsTranscriber.Transcription.pdb
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Transcription\obj\Debug\net10.0\ref\WindowsTranscriber.Transcription.dll

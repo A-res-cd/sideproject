@@ -1,0 +1,16 @@
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\bin\Debug\net10.0\WindowsTranscriber.Export.deps.json
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\bin\Debug\net10.0\WindowsTranscriber.Export.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\bin\Debug\net10.0\WindowsTranscriber.Export.pdb
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\bin\Debug\net10.0\WindowsTranscriber.Core.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\bin\Debug\net10.0\WindowsTranscriber.Core.pdb
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.csproj.AssemblyReference.cache
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.AssemblyInfoInputs.cache
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.AssemblyInfo.cs
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.csproj.CoreCompileInputs.cache
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.sourcelink.json
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsT.357D4F8B.Up2Date
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\refint\WindowsTranscriber.Export.dll
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\WindowsTranscriber.Export.pdb
+C:\Users\Amy Sapin\OneDrive\Desktop\a\sideproject\WindowsTranscriber\WindowsTranscriber\src\WindowsTranscriber.Export\obj\Debug\net10.0\ref\WindowsTranscriber.Export.dll

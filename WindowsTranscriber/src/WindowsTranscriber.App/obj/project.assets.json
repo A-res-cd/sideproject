@@ -1,11 +1,106 @@
 {
   "version": 3,
   "targets": {
-    "net10.0-windows7.0": {}
+    "net10.0-windows7.0": {
+      "WindowsTranscriber.Audio/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "WindowsTranscriber.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/WindowsTranscriber.Audio.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/WindowsTranscriber.Audio.dll": {}
+        }
+      },
+      "WindowsTranscriber.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/WindowsTranscriber.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/WindowsTranscriber.Core.dll": {}
+        }
+      },
+      "WindowsTranscriber.Data/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "WindowsTranscriber.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/WindowsTranscriber.Data.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/WindowsTranscriber.Data.dll": {}
+        }
+      },
+      "WindowsTranscriber.Export/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "WindowsTranscriber.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/WindowsTranscriber.Export.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/WindowsTranscriber.Export.dll": {}
+        }
+      },
+      "WindowsTranscriber.Transcription/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "WindowsTranscriber.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/WindowsTranscriber.Transcription.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/WindowsTranscriber.Transcription.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "WindowsTranscriber.Audio/1.0.0": {
+      "type": "project",
+      "path": "../WindowsTranscriber.Audio/WindowsTranscriber.Audio.csproj",
+      "msbuildProject": "../WindowsTranscriber.Audio/WindowsTranscriber.Audio.csproj"
+    },
+    "WindowsTranscriber.Core/1.0.0": {
+      "type": "project",
+      "path": "../WindowsTranscriber.Core/WindowsTranscriber.Core.csproj",
+      "msbuildProject": "../WindowsTranscriber.Core/WindowsTranscriber.Core.csproj"
+    },
+    "WindowsTranscriber.Data/1.0.0": {
+      "type": "project",
+      "path": "../WindowsTranscriber.Data/WindowsTranscriber.Data.csproj",
+      "msbuildProject": "../WindowsTranscriber.Data/WindowsTranscriber.Data.csproj"
+    },
+    "WindowsTranscriber.Export/1.0.0": {
+      "type": "project",
+      "path": "../WindowsTranscriber.Export/WindowsTranscriber.Export.csproj",
+      "msbuildProject": "../WindowsTranscriber.Export/WindowsTranscriber.Export.csproj"
+    },
+    "WindowsTranscriber.Transcription/1.0.0": {
+      "type": "project",
+      "path": "../WindowsTranscriber.Transcription/WindowsTranscriber.Transcription.csproj",
+      "msbuildProject": "../WindowsTranscriber.Transcription/WindowsTranscriber.Transcription.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0-windows7.0": []
+    "net10.0-windows7.0": [
+      "WindowsTranscriber.Audio >= 1.0.0",
+      "WindowsTranscriber.Core >= 1.0.0",
+      "WindowsTranscriber.Data >= 1.0.0",
+      "WindowsTranscriber.Export >= 1.0.0",
+      "WindowsTranscriber.Transcription >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Amy Sapin\\.nuget\\packages\\": {}
@@ -33,7 +128,23 @@
       "frameworks": {
         "net10.0-windows7.0": {
           "targetAlias": "net10.0-windows",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Audio\\WindowsTranscriber.Audio.csproj": {
+              "projectPath": "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Audio\\WindowsTranscriber.Audio.csproj"
+            },
+            "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Core\\WindowsTranscriber.Core.csproj": {
+              "projectPath": "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Core\\WindowsTranscriber.Core.csproj"
+            },
+            "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Data\\WindowsTranscriber.Data.csproj": {
+              "projectPath": "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Data\\WindowsTranscriber.Data.csproj"
+            },
+            "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Export\\WindowsTranscriber.Export.csproj": {
+              "projectPath": "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Export\\WindowsTranscriber.Export.csproj"
+            },
+            "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Transcription\\WindowsTranscriber.Transcription.csproj": {
+              "projectPath": "C:\\Users\\Amy Sapin\\OneDrive\\Desktop\\a\\sideproject\\WindowsTranscriber\\WindowsTranscriber\\src\\WindowsTranscriber.Transcription\\WindowsTranscriber.Transcription.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
