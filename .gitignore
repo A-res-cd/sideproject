@@ -1,0 +1,64 @@
+# .NET build output
+**/bin/
+**/obj/
+**/publish/
+artifacts/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Build and test results
+TestResults/
+*.trx
+coverage/
+coverage.*
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Windows files
+Thumbs.db
+Desktop.ini
+*.lnk
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# Local application data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+settings.json
+
+# Whisper models
+models/*.bin
+models/*.gguf
+WindowsTranscriber/models/*.bin
+WindowsTranscriber/models/*.gguf
+
+# Installer output
+installer/output/
+WindowsTranscriber/installer/output/
+
+# Publish output
+publish/
+WindowsTranscriber/publish/
