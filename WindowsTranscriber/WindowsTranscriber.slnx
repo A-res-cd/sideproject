@@ -1,2 +1,10 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WindowsTranscriber.App/WindowsTranscriber.App.csproj" />
+    <Project Path="src/WindowsTranscriber.Audio/WindowsTranscriber.Audio.csproj" />
+    <Project Path="src/WindowsTranscriber.Core/WindowsTranscriber.Core.csproj" />
+    <Project Path="src/WindowsTranscriber.Data/WindowsTranscriber.Data.csproj" />
+    <Project Path="src/WindowsTranscriber.Export/WindowsTranscriber.Export.csproj" />
+    <Project Path="src/WindowsTranscriber.Transcription/WindowsTranscriber.Transcription.csproj" />
+  </Folder>
 </Solution>

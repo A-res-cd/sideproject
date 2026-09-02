@@ -1,12 +1,1118 @@
-﻿<Window x:Class="WindowsTranscriber.App.MainWindow"
+<Window x:Class="WindowsTranscriber.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WindowsTranscriber.App"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="WindowsTranscriber"
+        Width="900"
+        Height="620"
+        MinWidth="660"
+        MinHeight="460"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource PrimaryTextBrush}"
+        Loaded="Window_Loaded"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Closing="Window_Closing">
+    <Window.Resources>
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="Background" Value="#2563EB" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#2563EB" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
 
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Padding" Value="14,7" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource StrongBorderBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource StrongBorderBrush}" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource StrongBorderBrush}" />
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        </Style>
+
+        <Style TargetType="ListBox">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Application picker -->
+        <Grid Margin="28">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsApplicationSelected}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsOverlayOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <DockPanel Grid.Row="0" Margin="0,0,0,18">
+                <Button DockPanel.Dock="Right"
+                        Width="108"
+                        Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource PrimaryButton}" />
+                <Button DockPanel.Dock="Right"
+                        Width="96"
+                        Margin="0,0,10,0"
+                        Content="Settings"
+                        Command="{Binding OpenSettingsCommand}"
+                        Style="{StaticResource SecondaryButton}" />
+                <Button DockPanel.Dock="Right"
+                        Width="92"
+                        Margin="0,0,10,0"
+                        Content="History"
+                        Command="{Binding OpenHistoryCommand}"
+                        Style="{StaticResource SecondaryButton}" />
+
+                <StackPanel>
+                    <TextBlock FontSize="28"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               Text="Choose an application" />
+                    <TextBlock Margin="0,5,12,0"
+                               FontSize="14"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Text="Select the program whose audio you want to transcribe." />
+                </StackPanel>
+            </DockPanel>
+
+            <ItemsControl Grid.Row="1"
+                          Margin="0,0,0,12"
+                          ItemsSource="{Binding RecentApplications}">
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasRecentApplications}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Margin="0,0,8,4"
+                                Padding="10,5"
+                                Content="{Binding DisplayName}"
+                                Command="{Binding SelectCommand}"
+                                ToolTip="{Binding ProcessName}"
+                                Style="{StaticResource SecondaryButton}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ProgressBar Grid.Row="2"
+                         Height="4"
+                         Margin="0,0,0,10"
+                         IsIndeterminate="True">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRefreshing}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+
+            <Border Grid.Row="3"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <ListBox ItemsSource="{Binding Applications}"
+                         SelectedItem="{Binding SelectedApplication}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="6" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="8,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock FontSize="15"
+                                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               Text="{Binding DisplayName}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Margin="0,3,0,0"
+                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                               Text="{Binding ProcessName}" />
+                                </StackPanel>
+
+                                <Border Grid.Column="1"
+                                        Margin="16,0,0,0"
+                                        Padding="9,4"
+                                        VerticalAlignment="Center"
+                                        Background="#EFF6FF"
+                                        CornerRadius="12">
+                                    <TextBlock Foreground="#1D4ED8"
+                                               Text="{Binding ProcessId, StringFormat=PID {0}}" />
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <TextBlock Grid.Row="4"
+                       Margin="0,14,0,0"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       Text="{Binding StatusMessage}" />
+        </Grid>
+
+        <!-- Live transcriber -->
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsApplicationSelected}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsOverlayOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0"
+                    Padding="26,20"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Margin="0,0,10,0"
+                                Content="History"
+                                Command="{Binding OpenHistoryCommand}"
+                                Style="{StaticResource SecondaryButton}" />
+                        <Button Margin="0,0,10,0"
+                                Content="Settings"
+                                Command="{Binding OpenSettingsCommand}"
+                                Style="{StaticResource SecondaryButton}" />
+                        <Button Content="Change application"
+                                Command="{Binding ChangeApplicationCommand}"
+                                Style="{StaticResource SecondaryButton}" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock FontSize="25"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Text="Live transcriber" />
+                        <StackPanel Margin="0,7,0,0" Orientation="Horizontal">
+                            <TextBlock FontWeight="SemiBold"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="{Binding SelectedApplication.DisplayName}" />
+                            <TextBlock Foreground="{DynamicResource MutedTextBrush}" Text="  |  " />
+                            <TextBlock Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Text="{Binding SelectedApplication.ProcessName}" />
+                            <TextBlock Foreground="{DynamicResource MutedTextBrush}" Text="  |  PID " />
+                            <TextBlock Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Text="{Binding SelectedProcessId}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="1"
+                    Margin="26,20,26,0"
+                    Padding="14,10"
+                    Background="#FFF7ED"
+                    BorderBrush="#FED7AA"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                <DockPanel>
+                    <Ellipse DockPanel.Dock="Left"
+                             Width="9"
+                             Height="9"
+                             Margin="0,0,9,0"
+                             VerticalAlignment="Center">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="#F59E0B" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsTranscribing}" Value="True">
+                                        <Setter Property="Fill" Value="#16A34A" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                        <Setter Property="Fill" Value="#F59E0B" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <TextBlock DockPanel.Dock="Right"
+                               Margin="16,0,0,0"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Foreground="#9A3412"
+                               Text="{Binding SessionDuration, StringFormat=Session {0}}" />
+                    <TextBlock DockPanel.Dock="Right"
+                               Margin="16,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="#9A3412"
+                               Text="{Binding DetectedLanguageDisplay}" />
+                    <TextBlock Foreground="#9A3412"
+                               Text="{Binding TranscriptionStatus}" />
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="2"
+                    Margin="26,16"
+                    Padding="18"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Margin="0,0,16,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Margin="0,0,7,0"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="Find:" />
+                            <TextBox x:Name="TranscriptSearchBox"
+                                     Grid.Column="1"
+                                     MinWidth="80"
+                                     Height="30"
+                                     Padding="7,3"
+                                     VerticalContentAlignment="Center"
+                                     ToolTip="Search transcript (Ctrl+F)"
+                                     TextChanged="TranscriptSearchBox_TextChanged"
+                                     KeyDown="TranscriptSearchBox_KeyDown" />
+                            <Button Grid.Column="2"
+                                    Width="76"
+                                    Height="30"
+                                    Margin="7,0,0,0"
+                                    Padding="6,2"
+                                    Content="Find next"
+                                    Click="FindNextButton_Click"
+                                    Style="{StaticResource SecondaryButton}" />
+                            <TextBlock x:Name="SearchResultText"
+                                       Grid.Column="3"
+                                       MinWidth="46"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource SecondaryTextBrush}" />
+                        </Grid>
+
+                        <StackPanel Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <Button Width="68"
+                                    Height="30"
+                                    Padding="5,2"
+                                    Content="Copy all"
+                                    Command="{Binding CopyTranscriptCommand}"
+                                    IsEnabled="{Binding HasTranscript}"
+                                    Style="{StaticResource SecondaryButton}" />
+                            <CheckBox Margin="12,0"
+                                      VerticalAlignment="Center"
+                                      Content="Auto-scroll"
+                                      IsChecked="{Binding IsAutoScrollEnabled, Mode=TwoWay}"
+                                      Checked="AutoScrollCheckBox_Checked"
+                                      Unchecked="AutoScrollCheckBox_Unchecked" />
+                            <Button Width="34"
+                                    Height="30"
+                                    Padding="0"
+                                    Content="A-"
+                                    Command="{Binding DecreaseFontSizeCommand}"
+                                    IsEnabled="{Binding CanDecreaseFontSize}"
+                                    ToolTip="Decrease transcript text size"
+                                    Style="{StaticResource SecondaryButton}" />
+                            <TextBlock Width="28"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Text="{Binding TranscriptFontSize, StringFormat={}{0:0}}" />
+                            <Button Width="34"
+                                    Height="30"
+                                    Padding="0"
+                                    Content="A+"
+                                    Command="{Binding IncreaseFontSizeCommand}"
+                                    IsEnabled="{Binding CanIncreaseFontSize}"
+                                    ToolTip="Increase transcript text size"
+                                    Style="{StaticResource SecondaryButton}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <TextBox x:Name="TranscriptTextBox"
+                                 Text="{Binding LiveTranscript, Mode=OneWay}"
+                                 TextChanged="TranscriptTextBox_TextChanged"
+                                 ScrollViewer.ScrollChanged="TranscriptTextBox_ScrollChanged"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 FontSize="{Binding TranscriptFontSize}"
+                                 Foreground="{DynamicResource BodyTextBrush}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" />
+
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LiveTranscript}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock HorizontalAlignment="Center"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="Waiting for live transcript" />
+                            <TextBlock Margin="0,8,0,0"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       Text="Transcribed speech will appear here." />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="3"
+                    Padding="26,14"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0">
+                <DockPanel>
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               TextTrimming="CharacterEllipsis"
+                               Text="{Binding TranscriptionStatus}" />
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Width="112"
+                                Margin="0,0,10,0"
+                                Content="Download"
+                                Command="{Binding ExportTranscriptCommand}"
+                                IsEnabled="{Binding HasTranscript}"
+                                ToolTip="Save as TXT, SRT, or VTT"
+                                Style="{StaticResource SecondaryButton}" />
+
+                        <Button Width="82"
+                                Margin="0,0,10,0"
+                                Content="Clear"
+                                Command="{Binding ClearTranscriptCommand}"
+                                IsEnabled="{Binding HasTranscript}"
+                                ToolTip="Clear the current transcript"
+                                Style="{StaticResource SecondaryButton}" />
+
+                        <Button Width="95"
+                                Margin="0,0,10,0"
+                                Content="Pause"
+                                Command="{Binding PauseListeningCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsTranscribing}" Value="True" />
+                                                <Condition Binding="{Binding IsPaused}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Width="95"
+                                Margin="0,0,10,0"
+                                Content="Resume"
+                                Command="{Binding ResumeListeningCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsTranscribing}" Value="True" />
+                                                <Condition Binding="{Binding IsPaused}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Width="130"
+                                Content="Start listening"
+                                Command="{Binding StartListeningCommand}"
+                                IsEnabled="{Binding CanStartTranscription}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsTranscriptionActive}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Width="130"
+                                Content="Stop listening"
+                                Command="{Binding StopListeningCommand}"
+                                Background="#DC2626"
+                                BorderBrush="#DC2626"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                Padding="16,8">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsTranscriptionActive}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!-- Transcript history overlay -->
+        <Grid Panel.ZIndex="21" Background="#770F172A">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHistoryOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Border Width="680"
+                    MaxHeight="530"
+                    Margin="24"
+                    Padding="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource StrongBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,18">
+                        <Button DockPanel.Dock="Right"
+                                Width="78"
+                                Content="Close"
+                                Command="{Binding CloseHistoryCommand}"
+                                Style="{StaticResource SecondaryButton}" />
+                        <StackPanel>
+                            <TextBlock FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Text="Transcript history" />
+                            <TextBlock Margin="0,4,12,0"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Text="Saved locally on this PC. Newest sessions appear first." />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Grid Grid.Row="1" MinHeight="250">
+                        <ListBox ItemsSource="{Binding HistorySessions}"
+                                 SelectedItem="{Binding SelectedHistorySession, Mode=TwoWay}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 BorderThickness="1"
+                                 Background="{DynamicResource SurfaceAltBrush}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="5" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="7,5">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock FontSize="15"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   Text="{Binding ApplicationName}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Grid.Column="1"
+                                                   Margin="16,0,0,0"
+                                                   Foreground="{DynamicResource BodyTextBrush}"
+                                                   Text="{Binding StartedAtText}" />
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.ColumnSpan="2"
+                                                   Margin="0,4,0,0"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                   Text="{Binding DetailsText}" />
+                                        <TextBlock Grid.Row="2"
+                                                   Grid.ColumnSpan="2"
+                                                   Margin="0,5,0,0"
+                                                   Foreground="{DynamicResource BodyTextBrush}"
+                                                   Text="{Binding PreviewText}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasHistorySessions}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock HorizontalAlignment="Center"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="No saved transcripts yet" />
+                            <TextBlock Margin="0,6,0,0"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       Text="Sessions appear after transcript text is captured." />
+                        </StackPanel>
+                    </Grid>
+
+                    <DockPanel Grid.Row="2" Margin="0,18,0,0">
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   Text="History keeps the newest 100 sessions." />
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Width="82"
+                                    Margin="0,0,10,0"
+                                    Content="Delete"
+                                    Command="{Binding DeleteHistoryCommand}"
+                                    IsEnabled="{Binding CanDeleteHistorySession}"
+                                    Style="{StaticResource SecondaryButton}" />
+                            <Button Width="126"
+                                    Content="Open transcript"
+                                    Command="{Binding RestoreHistoryCommand}"
+                                    IsEnabled="{Binding CanRestoreHistorySession}"
+                                    Style="{StaticResource PrimaryButton}" />
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Settings overlay -->
+        <Grid Panel.ZIndex="20" Background="#770F172A">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSettingsOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Border Width="540"
+                    MaxHeight="550"
+                    Margin="24"
+                    Padding="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource StrongBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                <Grid Margin="0,0,8,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,18">
+                        <Button DockPanel.Dock="Right"
+                                Width="78"
+                                Content="Close"
+                                Command="{Binding CloseSettingsCommand}"
+                                Style="{StaticResource SecondaryButton}" />
+                        <StackPanel>
+                            <TextBlock FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Text="Settings" />
+                            <TextBlock Margin="0,4,12,0"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Text="Changes save automatically." />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource BodyTextBrush}"
+                                   Text="Language" />
+                        <ComboBox Grid.Column="1"
+                                  Height="34"
+                                  Padding="7,3"
+                                  ItemsSource="{Binding LanguageOptions}"
+                                  SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
+                                  IsEnabled="{Binding IsLanguageSelectionEnabled}"
+                                  DisplayMemberPath="DisplayName" />
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Top"
+                                   Margin="0,7,0,0"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource BodyTextBrush}"
+                                   Text="Whisper model" />
+                        <StackPanel Grid.Column="1">
+                            <ComboBox Height="34"
+                                      Padding="7,3"
+                                      ItemsSource="{Binding ModelOptions}"
+                                      SelectedItem="{Binding SelectedModelOption, Mode=TwoWay}"
+                                      DisplayMemberPath="DisplayName" />
+                            <TextBlock Margin="0,5,0,0"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       Text="{Binding SelectedModelOption.Description}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0,0,0,18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource BodyTextBrush}"
+                                   Text="Transcript display" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Width="38"
+                                    Height="32"
+                                    Padding="0"
+                                    Content="A-"
+                                    Command="{Binding DecreaseFontSizeCommand}"
+                                    IsEnabled="{Binding CanDecreaseFontSize}"
+                                    Style="{StaticResource SecondaryButton}" />
+                            <TextBlock Width="34"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"
+                                       Text="{Binding TranscriptFontSize, StringFormat={}{0:0}}" />
+                            <Button Width="38"
+                                    Height="32"
+                                    Padding="0"
+                                    Content="A+"
+                                    Command="{Binding IncreaseFontSizeCommand}"
+                                    IsEnabled="{Binding CanIncreaseFontSize}"
+                                    Style="{StaticResource SecondaryButton}" />
+                            <CheckBox Margin="20,0,0,0"
+                                      VerticalAlignment="Center"
+                                      Content="Auto-scroll"
+                                      IsChecked="{Binding IsAutoScrollEnabled, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="4"
+                            Margin="0,0,0,16"
+                            Padding="12"
+                            Background="{DynamicResource SurfaceAltBrush}"
+                            BorderBrush="{DynamicResource StrongBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="7">
+                        <StackPanel>
+                            <TextBlock Margin="0,0,0,10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="Transcription quality" />
+                            <Grid Margin="0,0,0,9">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" Text="Preset" />
+                                <StackPanel Grid.Column="1">
+                                    <ComboBox Height="32"
+                                              ItemsSource="{Binding QualityPresetOptions}"
+                                              SelectedItem="{Binding SelectedQualityPreset, Mode=TwoWay}"
+                                              DisplayMemberPath="DisplayName" />
+                                    <TextBlock Margin="0,3,0,0"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                               Text="{Binding SelectedQualityPreset.Description}" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="0,0,0,7">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="54" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" Text="Minimum confidence" />
+                                <Slider Grid.Column="1"
+                                        Minimum="0.05"
+                                        Maximum="0.95"
+                                        TickFrequency="0.05"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding MinimumConfidence, Mode=TwoWay}" />
+                                <TextBlock Grid.Column="2"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Right"
+                                           Text="{Binding MinimumConfidence, StringFormat={}{0:P0}}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,7">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="54" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" Text="No-speech limit" />
+                                <Slider Grid.Column="1"
+                                        Minimum="0.05"
+                                        Maximum="0.95"
+                                        TickFrequency="0.05"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding MaximumNoSpeechProbability, Mode=TwoWay}" />
+                                <TextBlock Grid.Column="2"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Right"
+                                           Text="{Binding MaximumNoSpeechProbability, StringFormat={}{0:P0}}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="64" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" Text="Window overlap" />
+                                <Slider Grid.Column="1"
+                                        Minimum="0"
+                                        Maximum="2000"
+                                        TickFrequency="50"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding OverlapMilliseconds, Mode=TwoWay}" />
+                                <TextBlock Grid.Column="2"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Right"
+                                           Text="{Binding OverlapMilliseconds, StringFormat={}{0:0} ms}" />
+                            </Grid>
+                            <CheckBox Content="Mark borderline segments as [uncertain]"
+                                      IsChecked="{Binding MarkUncertainSegments, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="5"
+                            Margin="0,0,0,16"
+                            Padding="12"
+                            Background="{DynamicResource SurfaceAltBrush}"
+                            BorderBrush="{DynamicResource StrongBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="7">
+                        <StackPanel>
+                            <TextBlock Margin="0,0,0,10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="Desktop conveniences" />
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center" Text="Theme" />
+                                <ComboBox Grid.Column="1"
+                                          Height="32"
+                                          ItemsSource="{Binding ThemeOptions}"
+                                          SelectedItem="{Binding SelectedThemeOption, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName" />
+                            </Grid>
+                            <CheckBox Margin="0,0,0,7"
+                                      Content="Global start/stop hotkey (Ctrl+Shift+Space)"
+                                      IsChecked="{Binding GlobalHotkeyEnabled, Mode=TwoWay}" />
+                            <CheckBox Margin="0,0,0,7"
+                                      Content="Minimize or close to system tray"
+                                      IsChecked="{Binding MinimizeToTray, Mode=TwoWay}" />
+                            <CheckBox Margin="0,0,0,7"
+                                      Content="Minimize when transcription starts"
+                                      IsChecked="{Binding MinimizeWhileTranscribing, Mode=TwoWay}" />
+                            <CheckBox Content="Show Windows notifications"
+                                      IsChecked="{Binding NotificationsEnabled, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="6"
+                            Margin="0,0,0,16"
+                            Padding="12"
+                            Background="{DynamicResource SurfaceAltBrush}"
+                            BorderBrush="{DynamicResource StrongBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="7">
+                        <StackPanel>
+                            <TextBlock Margin="0,0,0,9"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource BodyTextBrush}"
+                                       Text="Installed models" />
+                            <ItemsControl ItemsSource="{Binding ManagedModels}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,0,8"
+                                                Padding="10"
+                                                Background="{DynamicResource SurfaceBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="6">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Margin="0,0,10,0">
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                                               Text="{Binding DisplayName}" />
+                                                    <TextBlock Margin="0,3,0,0"
+                                                               FontSize="12"
+                                                               Foreground="{DynamicResource SecondaryTextBrush}"
+                                                               Text="{Binding StatusText}"
+                                                               TextWrapping="Wrap" />
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1"
+                                                            Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Button MinWidth="74"
+                                                            Height="30"
+                                                            Padding="10,4"
+                                                            Content="{Binding DownloadActionText}"
+                                                            Command="{Binding DownloadCommand}"
+                                                            IsEnabled="{Binding CanDownload}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button"
+                                                                   BasedOn="{StaticResource SecondaryButton}">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                    <Button MinWidth="64"
+                                                            Height="30"
+                                                            Padding="10,4"
+                                                            Content="Delete"
+                                                            Command="{Binding DeleteCommand}"
+                                                            IsEnabled="{Binding CanDelete}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button"
+                                                                   BasedOn="{StaticResource SecondaryButton}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                    <Button MinWidth="64"
+                                                            Height="30"
+                                                            Padding="10,4"
+                                                            Content="Cancel"
+                                                            Command="{Binding CancelCommand}"
+                                                            IsEnabled="{Binding CanCancelDownload}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button"
+                                                                   BasedOn="{StaticResource SecondaryButton}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                </StackPanel>
+
+                                                <ProgressBar Grid.Row="1"
+                                                             Grid.ColumnSpan="2"
+                                                             Height="5"
+                                                             Margin="0,9,0,0"
+                                                             Minimum="0"
+                                                             Maximum="100"
+                                                             Value="{Binding DownloadProgress, Mode=OneWay}">
+                                                    <ProgressBar.Style>
+                                                        <Style TargetType="ProgressBar">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ProgressBar.Style>
+                                                </ProgressBar>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock FontSize="12"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       TextWrapping="Wrap"
+                                       Text="Downloads stay on this PC. Model actions are disabled while transcription is active." />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="7"
+                            Padding="12,10"
+                            Background="#EFF6FF"
+                            BorderBrush="#BFDBFE"
+                            BorderThickness="1"
+                            CornerRadius="7">
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold"
+                                       Foreground="#1D4ED8"
+                                       Text="{Binding SettingsConfigurationSummary}" />
+                            <TextBlock Margin="0,4,0,0"
+                                       Foreground="#475569"
+                                       TextWrapping="Wrap"
+                                       Text="Language, model, and quality changes apply to the next listening session. Desktop options apply immediately." />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                </ScrollViewer>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

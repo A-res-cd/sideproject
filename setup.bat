@@ -33,6 +33,15 @@ echo [2/8] Creating solution...
 
 dotnet new sln -n WindowsTranscriber
 
+set "SOLUTION_FILE="
+if exist "WindowsTranscriber.slnx" set "SOLUTION_FILE=WindowsTranscriber.slnx"
+if not defined SOLUTION_FILE if exist "WindowsTranscriber.sln" set "SOLUTION_FILE=WindowsTranscriber.sln"
+
+if not defined SOLUTION_FILE (
+    echo [ERROR] The .NET SDK did not create a solution file.
+    goto :build_failed
+)
+
 mkdir src
 mkdir tests
 mkdir native
@@ -45,47 +54,53 @@ echo [3/8] Creating .NET projects...
 
 dotnet new wpf ^
     -n WindowsTranscriber.App ^
-    -o src\WindowsTranscriber.App
+    -o src\WindowsTranscriber.App ^
+    -f net8.0
 
 dotnet new classlib ^
     -n WindowsTranscriber.Core ^
-    -o src\WindowsTranscriber.Core
+    -o src\WindowsTranscriber.Core ^
+    -f net8.0
 
 dotnet new classlib ^
     -n WindowsTranscriber.Audio ^
-    -o src\WindowsTranscriber.Audio
+    -o src\WindowsTranscriber.Audio ^
+    -f net8.0
 
 dotnet new classlib ^
     -n WindowsTranscriber.Transcription ^
-    -o src\WindowsTranscriber.Transcription
+    -o src\WindowsTranscriber.Transcription ^
+    -f net8.0
 
 dotnet new classlib ^
     -n WindowsTranscriber.Data ^
-    -o src\WindowsTranscriber.Data
+    -o src\WindowsTranscriber.Data ^
+    -f net8.0
 
 dotnet new classlib ^
     -n WindowsTranscriber.Export ^
-    -o src\WindowsTranscriber.Export
+    -o src\WindowsTranscriber.Export ^
+    -f net8.0
 
 echo.
 echo [4/8] Adding projects to solution...
 
-dotnet sln WindowsTranscriber.sln add ^
+dotnet sln "%SOLUTION_FILE%" add ^
     src\WindowsTranscriber.App\WindowsTranscriber.App.csproj
 
-dotnet sln WindowsTranscriber.sln add ^
+dotnet sln "%SOLUTION_FILE%" add ^
     src\WindowsTranscriber.Core\WindowsTranscriber.Core.csproj
 
-dotnet sln WindowsTranscriber.sln add ^
+dotnet sln "%SOLUTION_FILE%" add ^
     src\WindowsTranscriber.Audio\WindowsTranscriber.Audio.csproj
 
-dotnet sln WindowsTranscriber.sln add ^
+dotnet sln "%SOLUTION_FILE%" add ^
     src\WindowsTranscriber.Transcription\WindowsTranscriber.Transcription.csproj
 
-dotnet sln WindowsTranscriber.sln add ^
+dotnet sln "%SOLUTION_FILE%" add ^
     src\WindowsTranscriber.Data\WindowsTranscriber.Data.csproj
 
-dotnet sln WindowsTranscriber.sln add ^
+dotnet sln "%SOLUTION_FILE%" add ^
     src\WindowsTranscriber.Export\WindowsTranscriber.Export.csproj
 
 echo.

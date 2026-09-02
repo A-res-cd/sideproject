@@ -4,6 +4,15 @@
              xmlns:local="clr-namespace:WindowsTranscriber.App"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F4F6FA" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="SurfaceAltBrush" Color="#F8FAFC" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#E2E8F0" />
+        <SolidColorBrush x:Key="StrongBorderBrush" Color="#CBD5E1" />
+        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#0F172A" />
+        <SolidColorBrush x:Key="BodyTextBrush" Color="#334155" />
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#64748B" />
+        <SolidColorBrush x:Key="MutedTextBrush" Color="#94A3B8" />
+        <SolidColorBrush x:Key="InputBrush" Color="#FFFFFF" />
     </Application.Resources>
 </Application>
