@@ -764,17 +764,23 @@
                             <ColumnDefinition Width="145" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center"
+                        <TextBlock VerticalAlignment="Top"
+                                   Margin="0,7,0,0"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource BodyTextBrush}"
                                    Text="Language" />
-                        <ComboBox Grid.Column="1"
-                                  Height="34"
-                                  Padding="7,3"
-                                  ItemsSource="{Binding LanguageOptions}"
-                                  SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
-                                  IsEnabled="{Binding IsLanguageSelectionEnabled}"
-                                  DisplayMemberPath="DisplayName" />
+                        <StackPanel Grid.Column="1">
+                            <ComboBox Height="34"
+                                      Padding="7,3"
+                                      ItemsSource="{Binding LanguageOptions}"
+                                      SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay}"
+                                      IsEnabled="{Binding IsLanguageSelectionEnabled}"
+                                      DisplayMemberPath="DisplayName" />
+                            <TextBlock Margin="0,5,0,0"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                       TextWrapping="Wrap"
+                                       Text="{Binding SelectedLanguageOption.Description}" />
+                        </StackPanel>
                     </Grid>
 
                     <Grid Grid.Row="2" Margin="0,0,0,16">

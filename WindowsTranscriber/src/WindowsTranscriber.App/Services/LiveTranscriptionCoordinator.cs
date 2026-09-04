@@ -8,6 +8,10 @@ namespace WindowsTranscriber.App.Services;
 
 public sealed class LiveTranscriptionCoordinator : IAsyncDisposable
 {
+    private const int FilipinoEnglishMinimumOverlapMilliseconds = 1_250;
+    private const float FilipinoEnglishMinimumConfidence = 0.45f;
+    private const float FilipinoEnglishMaximumNoSpeechProbability = 0.55f;
+
     private readonly object _stateLock = new();
     private readonly WhisperTranscriptionService _transcriptionService = new();
 
@@ -55,8 +59,8 @@ public sealed class LiveTranscriptionCoordinator : IAsyncDisposable
             processId,
             applicationName,
             sessionId,
-            WhisperModelSize.Base,
-            "auto",
+            WhisperModelSize.Small,
+            TranscriptionLanguageCodes.FilipinoEnglish,
             TranscriptionQualityOptions.Default,
             cancellationToken);
 
@@ -85,6 +89,26 @@ public sealed class LiveTranscriptionCoordinator : IAsyncDisposable
         TranscriptionQualityOptions qualityOptions,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(qualityOptions);
+        qualityOptions = qualityOptions.Normalize();
+        if (TranscriptionLanguageCodes.IsFilipinoEnglish(languageCode))
+        {
+            // Extra shared audio keeps a language switch at a window boundary
+            // from losing the first short word in either language.
+            qualityOptions = qualityOptions with
+            {
+                MinimumConfidence = Math.Max(
+                    qualityOptions.MinimumConfidence,
+                    FilipinoEnglishMinimumConfidence),
+                MaximumNoSpeechProbability = Math.Min(
+                    qualityOptions.MaximumNoSpeechProbability,
+                    FilipinoEnglishMaximumNoSpeechProbability),
+                OverlapMilliseconds = Math.Max(
+                    qualityOptions.OverlapMilliseconds,
+                    FilipinoEnglishMinimumOverlapMilliseconds),
+            };
+        }
+
         CancellationTokenSource runCancellation;
         TaskCompletionSource startCompletion;
 

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Text;
 using Whisper.net;
 using WindowsTranscriber.Core.Models;
 
@@ -6,6 +7,29 @@ namespace WindowsTranscriber.Transcription.Whisper;
 
 public sealed class WhisperTranscriptionService : IAsyncDisposable
 {
+    private const string FilipinoEnglishPrompt =
+        "Magandang araw! Kumusta ka? Ayos lang ako. Today pag-uusapan natin " +
+        "ang mga kailangan gawin. Okay na ito, pero kailangan pa nating tingnan " +
+        "at ayusin. Please sabihin mo ulit kung hindi malinaw. Pakisend na lang " +
+        "ang file, tapos mag-follow up tayo bukas. Maraming salamat!";
+
+    private static readonly IReadOnlySet<string> GermanMarkers =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "aber", "auch", "das", "dem", "den", "der", "die", "ein",
+            "eine", "frei", "ganz", "gar", "ich", "im", "ist",
+            "kann", "mit", "nicht", "und", "von", "wie", "zu",
+        };
+
+    private static readonly IReadOnlySet<string> IndonesianMarkers =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "banget", "belum", "bisa", "dari", "dengan", "dong", "gak",
+            "gini", "jadi", "kalau", "kamu", "karena", "kita", "lo", "lu",
+            "nampak", "nge", "nggak", "nih", "saya", "sih", "sudah",
+            "tapi", "tidak", "tinggal", "untuk", "usir", "yang",
+        };
+
     private readonly SemaphoreSlim _initializationLock = new(1, 1);
     private readonly WhisperModelManager _modelManager = new();
     private WhisperFactory? _factory;
@@ -28,8 +52,8 @@ public sealed class WhisperTranscriptionService : IAsyncDisposable
         Action<string>? reportStatus = null,
         CancellationToken cancellationToken = default) =>
         await InitializeAsync(
-            WhisperModelSize.Base,
-            "auto",
+            WhisperModelSize.Small,
+            TranscriptionLanguageCodes.FilipinoEnglish,
             TranscriptionQualityOptions.Default,
             reportStatus,
             cancellationToken).ConfigureAwait(false);
@@ -55,6 +79,13 @@ public sealed class WhisperTranscriptionService : IAsyncDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(languageCode);
         ArgumentNullException.ThrowIfNull(qualityOptions);
+        if (!TranscriptionLanguageCodes.IsSupported(languageCode))
+        {
+            throw new ArgumentException(
+                "Only English, Filipino, and Filipino + English are supported.",
+                nameof(languageCode));
+        }
+
         qualityOptions = qualityOptions.Normalize();
 
         if (_processor is not null &&
@@ -110,12 +141,23 @@ public sealed class WhisperTranscriptionService : IAsyncDisposable
                             .WithProbabilities()
                             .WithNoSpeechThreshold(qualityOptions.MaximumNoSpeechProbability);
 
-                        builder = string.Equals(
-                            languageCode,
-                            "auto",
-                            StringComparison.OrdinalIgnoreCase)
-                            ? builder.WithLanguageDetection()
-                            : builder.WithLanguage(languageCode);
+                        if (TranscriptionLanguageCodes.IsFilipinoEnglish(languageCode))
+                        {
+                            // Whisper selects one language token for a decode. Tagalog
+                            // keeps Filipino speech accurate while the mixed prompt
+                            // preserves the English words common in natural Taglish.
+                            builder = builder
+                                .WithLanguage(TranscriptionLanguageCodes.Filipino)
+                                .WithPrompt(FilipinoEnglishPrompt)
+                                .WithNoContext();
+                        }
+                        else
+                        {
+                            builder = builder.WithLanguage(
+                                TranscriptionLanguageCodes.IsEnglish(languageCode)
+                                    ? TranscriptionLanguageCodes.English
+                                    : TranscriptionLanguageCodes.Filipino);
+                        }
 
                         builder = qualityOptions.Preset switch
                         {
@@ -124,6 +166,11 @@ public sealed class WhisperTranscriptionService : IAsyncDisposable
                                 .WithGreedySamplingStrategy(strategy =>
                                     strategy.WithBestOf(1)),
                             TranscriptionQualityPreset.HighAccuracy => builder
+                                .WithTemperature(0)
+                                .WithBeamSearchSamplingStrategy(strategy =>
+                                    strategy.WithBeamSize(5)),
+                            _ when TranscriptionLanguageCodes.IsFilipinoEnglish(
+                                languageCode) => builder
                                 .WithTemperature(0)
                                 .WithBeamSearchSamplingStrategy(strategy =>
                                     strategy.WithBeamSize(5)),
@@ -176,7 +223,7 @@ public sealed class WhisperTranscriptionService : IAsyncDisposable
             .ConfigureAwait(false))
         {
             var text = segment.Text?.Trim();
-            if (!string.IsNullOrWhiteSpace(text))
+            if (!string.IsNullOrWhiteSpace(text) && IsTargetLanguageText(text))
             {
                 var confidence = float.IsFinite(segment.Probability)
                     ? Math.Clamp(segment.Probability, 0, 1)
@@ -190,9 +237,84 @@ public sealed class WhisperTranscriptionService : IAsyncDisposable
                     segment.End,
                     confidence,
                     noSpeechProbability,
-                    segment.Language);
+                    TranscriptionLanguageCodes.IsFilipinoEnglish(
+                        _configuredLanguageCode)
+                        ? TranscriptionLanguageCodes.FilipinoEnglish
+                        : segment.Language);
             }
         }
+    }
+
+    private static bool IsTargetLanguageText(string text)
+    {
+        if (ContainsUnsupportedWritingSystem(text))
+        {
+            return false;
+        }
+
+        var words = GetWords(text);
+        return !LooksLikeUnsupportedLanguage(words, GermanMarkers) &&
+            !LooksLikeUnsupportedLanguage(words, IndonesianMarkers);
+    }
+
+    private static bool ContainsUnsupportedWritingSystem(string text)
+    {
+        foreach (var rune in text.EnumerateRunes())
+        {
+            if (!Rune.IsLetter(rune))
+            {
+                continue;
+            }
+
+            var value = rune.Value;
+            var isLatin = value is >= 0x0041 and <= 0x007A or
+                >= 0x00C0 and <= 0x024F or
+                >= 0x1E00 and <= 0x1EFF;
+            if (!isLatin)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static IReadOnlyList<string> GetWords(string text)
+    {
+        var words = new List<string>();
+        var word = new StringBuilder();
+        foreach (var rune in text.EnumerateRunes())
+        {
+            if (Rune.IsLetter(rune))
+            {
+                word.Append(rune.ToString());
+            }
+            else if (word.Length > 0)
+            {
+                words.Add(word.ToString());
+                word.Clear();
+            }
+        }
+
+        if (word.Length > 0)
+        {
+            words.Add(word.ToString());
+        }
+
+        return words;
+    }
+
+    private static bool LooksLikeUnsupportedLanguage(
+        IReadOnlyList<string> words,
+        IReadOnlySet<string> markers)
+    {
+        if (words.Count < 4)
+        {
+            return false;
+        }
+
+        var markerCount = words.Count(markers.Contains);
+        return markerCount >= 2 && markerCount * 5 >= words.Count * 2;
     }
 
     public async ValueTask DisposeAsync()

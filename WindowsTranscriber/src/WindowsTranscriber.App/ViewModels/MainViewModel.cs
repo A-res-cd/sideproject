@@ -28,22 +28,19 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private static readonly TranscriptionLanguageOption[] AvailableLanguageOptions =
     [
-        new("auto", "Auto detect"),
-        new("en", "English"),
-        new("tl", "Filipino / Tagalog"),
-        new("es", "Spanish"),
-        new("fr", "French"),
-        new("de", "German"),
-        new("ja", "Japanese"),
-        new("ko", "Korean"),
-        new("zh", "Chinese"),
+        new(
+            TranscriptionLanguageCodes.FilipinoEnglish,
+            "Filipino + English (Taglish)",
+            "Natural code-switching with stricter filtering and overlap. Small model recommended."),
+        new(TranscriptionLanguageCodes.English, "English"),
+        new(TranscriptionLanguageCodes.Filipino, "Filipino / Tagalog"),
     ];
 
     private static readonly WhisperModelOption[] AvailableModelOptions =
     [
         new(WhisperModelSize.Tiny, "Tiny (~75 MB)", "Fastest, lower accuracy"),
-        new(WhisperModelSize.Base, "Base (~142 MB)", "Balanced speed and accuracy"),
-        new(WhisperModelSize.Small, "Small (~466 MB)", "Slower, better accuracy"),
+        new(WhisperModelSize.Base, "Base (~142 MB)", "Balanced speed; limited Filipino accuracy"),
+        new(WhisperModelSize.Small, "Small (~466 MB)", "Recommended for Filipino and Taglish"),
         new(WhisperModelSize.TinyEnglish, "Tiny English-only (~75 MB)", "Fast English-only model"),
         new(WhisperModelSize.BaseEnglish, "Base English-only (~142 MB)", "Balanced English-only model"),
         new(WhisperModelSize.SmallEnglish, "Small English-only (~466 MB)", "More accurate English-only model"),
@@ -114,7 +111,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     private TimeSpan _sessionBaseDuration;
     private TranscriptionLanguageOption _selectedLanguageOption =
         AvailableLanguageOptions[0];
-    private WhisperModelOption _selectedModelOption = AvailableModelOptions[1];
+    private WhisperModelOption _selectedModelOption = AvailableModelOptions[2];
     private TranscriptHistoryItemViewModel? _selectedHistorySession;
     private TranscriptionQualityPresetOption _selectedQualityPreset =
         AvailableQualityPresets[1];
@@ -403,7 +400,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
                 if (IsEnglishOnlyModel(value.ModelSize))
                 {
                     SelectedLanguageOption = AvailableLanguageOptions.First(option =>
-                        option.Code == "en");
+                        option.Code == TranscriptionLanguageCodes.English);
                 }
 
                 QueueSettingsSave();
@@ -871,11 +868,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         IsStartingTranscription = true;
         TranscriptionStatus = "Starting local transcription...";
         var effectiveLanguageCode = IsEnglishOnlyModel(SelectedModelOption.ModelSize)
-            ? "en"
+            ? TranscriptionLanguageCodes.English
             : SelectedLanguageOption.Code;
-        DetectedLanguageDisplay = effectiveLanguageCode == "auto"
-            ? "Language: detecting..."
-            : $"Language: {GetLanguageDisplayName(effectiveLanguageCode)}";
+        DetectedLanguageDisplay =
+            $"Language: {GetLanguageDisplayName(effectiveLanguageCode)}";
 
         try
         {
@@ -1948,9 +1944,9 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private static string GetLanguageDisplayName(string languageCode)
     {
-        if (string.Equals(languageCode, "auto", StringComparison.OrdinalIgnoreCase))
+        if (TranscriptionLanguageCodes.IsFilipinoEnglish(languageCode))
         {
-            return "Auto detect";
+            return "Filipino + English (Taglish)";
         }
 
         try
